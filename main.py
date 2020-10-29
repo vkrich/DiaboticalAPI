@@ -4,26 +4,29 @@ import json
 import requests
 
 def first_requirement(gamers, count):
-  result = []        
-  # Print users for count times
-  for i in range(count):
-    result.append(gamers[i])
-  print(json.dumps(result))
-  # return count number of gamers for Task 2 and 3
+  ''' Print first <count> users '''
+  try:
+    result = gamers[0:count]
+  except IndexError:
+    print('Gamers count less, than you want, get all we have')
+    print(json.dumps(gamers))
+    return gamers  
+
+  print(json.dumps(result))  
   return result
 
 
 def second_requirement(gamers):
-  try:
-    # filter gamers with user_id we need      
+  '''Get info about <user_ id>'''
+  try:         
     print(list(filter(lambda x: x['user_id'] == params_dict['user_id'], gamers)))
   except KeyError:
     print('User_id not found in commands or you entered wrong user_id')
 
 
 def third_requirement(gamers):
-  try:   
-    # filter gamers with country we need, then count it
+  '''filter gamers with country we need, then count it'''
+  try:  
     print(len(list(filter(lambda x: x['country'] == params_dict['country'], gamers))))
   except KeyError:
     print('Country not found or you entered wrong country code')
@@ -50,10 +53,13 @@ r_macguffin, r_wo, r_rocket_arena_2, r_shaft_arena_1, r_ca_2, r_ca_1")
     gamers = json.loads(get_request.text)["leaderboard"] 
     try:   
       # in 2 an 3 requirement see Count users
-      gamers = first_requirement(gamers, int(params_dict['count']))
+      get_count = int(params_dict['count'])
+      if get_count < 1:
+        raise ValueError
+      gamers = first_requirement(gamers, get_count)
     except (KeyError, ValueError): 
       # if count wrong or empty select all gamers 
-      print('Count N - is not integer number or an empty command. Done without Count.')
+      print('Count N - is wrong or an empty command. Select all gamers.')
       print(json.dumps(gamers))
         
     if 'user_id' in params_dict.keys():
